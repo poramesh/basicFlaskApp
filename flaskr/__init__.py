@@ -1,3 +1,4 @@
+
 import os
 
 from flask import Flask, app
@@ -13,7 +14,7 @@ def create_app(test_config=None):
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
-        app.config.from_pyfile('config.py', silent=True)
+        app.config.from_pyfile('config.py', silent=True) #silent=True suppresses errors that might occur if config.py does not exist. It allows the application to continue without crashing if the file is missing, which is useful when the config.py file is optional or used for environment-specific configurations.
     else:
         # load the test config if passed in
         app.config.from_mapping(test_config)
@@ -29,8 +30,12 @@ def create_app(test_config=None):
     def hello():
         return 'Hello, World!'
     
-    from .import db
+    from . import db
     db.init_app(app)
+
+
+    from . import auth
+    app.register_blueprint(auth.bp)
 
     return app
 
