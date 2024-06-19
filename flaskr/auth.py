@@ -35,8 +35,6 @@ def register():
             else:
                 return redirect(url_for("auth.login")) #The structure of try-except-else is as follows:
 
-
-
         flash(error)
 
     return render_template('auth/register.html')
