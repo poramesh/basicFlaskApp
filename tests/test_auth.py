@@ -25,7 +25,7 @@ and expected outcomes for a single test function, effectively creating parameter
 @pytest.mark.parametrize(('username', 'password', 'message'), (
     ('', '', b'Username is required.'),
     ('a', '', b'Password is required.'),
-    ('test', 'test', b'already registered'),
+    ('test', 'test', b'User test is already registered.'), 
 ))
 def test_register_validate_input(client, username, password, message):
     response = client.post(
@@ -47,6 +47,7 @@ def test_login(client, auth):
         assert session['user_id'] == 1
         assert g.user['username'] == 'test'
 
+'''Using client in a with block allows accessing context variables such as session after the response is returned. Normally, accessing session outside of a request would raise an error.'''
 
 @pytest.mark.parametrize(('username', 'password', 'message'), (
     ('a', 'test', b'Incorrect username.'),

@@ -67,12 +67,19 @@ class AuthActions(object):
 
     def logout(self):
         return self._client.get('/auth/logout')
+
+
+@pytest.fixture
+def auth(client):
+    return AuthActions(client)
     
 
 '''Here, client is a parameter name in the constructor (__init__ method) of the AuthActions class. When an instance of AuthActions is created,
  a value for client must be provided. This client parameter refers to an object that is expected to have methods like post and get, which typically correspond to HTTP request methods.'''
 
 
-@pytest.fixture
-def auth(client):
-    return AuthActions(client)
+
+
+'''To run the tests, use the pytest command. It will find and run all the test functions you’ve written.
+
+'''
