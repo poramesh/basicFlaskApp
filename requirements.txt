@@ -1,0 +1,16 @@
+blinker==1.8.2
+build==1.2.1
+click==8.1.7
+colorama==0.4.6
+coverage==7.5.3
+Flask==3.0.3
+-e c:\users\pooja\desktop\python\flask\basicflaskappfromtutorial
+iniconfig==2.0.0
+itsdangerous==2.2.0
+Jinja2==3.1.4
+MarkupSafe==2.1.5
+packaging==24.1
+pluggy==1.5.0
+pyproject_hooks==1.1.0
+pytest==8.2.2
+Werkzeug==3.0.3
