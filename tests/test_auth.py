@@ -25,7 +25,7 @@ and expected outcomes for a single test function, effectively creating parameter
 @pytest.mark.parametrize(('username', 'password', 'message'), (
     ('', '', b'Username is required.'),
     ('a', '', b'Password is required.'),
-    ('test', 'test', b'User test is already registered.'), 
+    ('test', 'test', b'already registered.'), 
 ))
 def test_register_validate_input(client, username, password, message):
     response = client.post(

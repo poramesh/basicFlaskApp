@@ -12,17 +12,26 @@ bp = Blueprint('blog', __name__)
 @bp.route('/')
 def index():
     db = get_db()
-    posts = db.execute(
-        'SELECT p.id, title, body, created, author_id, username'
-        ' FROM post p JOIN user u ON p.author_id = u.id'
-        ' ORDER BY created DESC'
-    ).fetchall()
+    user_id = 0
+    if g.user is not None:
+        user_id = g.user['id']
+    
+
+    query = '''SELECT p.id, title, body, p.created, author_id, username, count(l.post_id) as likes,
+    CASE WHEN ul.post_id IS NOT NULL THEN 1 ELSE 0 END AS user_liked 
+    FROM post p 
+    JOIN user u ON p.author_id = u.id 
+    LEFT JOIN likes l on p.id = l.post_id 
+    LEFT JOIN likes ul on ul.post_id = p.id AND ul.user_id = ? 
+    GROUP BY p.id, p.title, p.body, p.created, p.author_id, u.username
+    ORDER BY p.created DESC'''
+    posts = db.execute(query, (user_id,)).fetchall()
+
+   
     return render_template('blog/index.html', posts=posts)
 
 '''The purpose of this JOIN operation is to combine the data from the post table and the user table so that 
 you can retrieve information about both the post and the user who created it in a single query.
-
-
 
 def login_required(view):
     @functools.wraps(view)
@@ -73,12 +82,16 @@ logged in user. To avoid duplicating code, you can write a function to get the p
 
 
 '''404 means “Not Found”, and 403 means “Forbidden”. 
-(401 means “Unauthorized”, but you redirect to the login page instead of returning that status.)'''
+(401 means “Unauthorized”, but you redirect to the login page instead of returning that status.)
+
+WHERE clause in a query, it is applied after the FROM clause and any JOIN operations, but before the GROUP BY,
+ HAVING, and ORDER BY clauses. I'''
 
 def get_post(id, check_author=True):
     post = get_db().execute(
         'SELECT p.id, title, body, created, author_id, username'
-        ' FROM post p JOIN user u ON p.author_id = u.id'
+        ' FROM post p'
+        ' JOIN user u ON p.author_id = u.id'
         ' WHERE p.id = ?',
         (id,)
     ).fetchone()
@@ -90,6 +103,7 @@ def get_post(id, check_author=True):
         abort(403)
 
     return post
+
 
 
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
@@ -136,3 +150,30 @@ def delete(id):
 
 '''The delete view doesn’t have its own template, the delete button is part of update.html and posts to the /<id>/delete URL. Since there is no template, 
 it will only handle the POST method and then redirect to the index view.'''
+
+
+#A detail view to show a single post. Click a post’s title to go to its page.
+@bp.route('/<int:id>', methods=('GET',))
+def post(id):
+    post = get_db().execute('SELECT * FROM post WHERE id=?',(id,)).fetchone()
+    error = None
+    if not post:
+        error = 'No Post Found'
+        return redirect(url_for('blog.index'))
+    return render_template('blog/post.html',post=post)
+
+
+#a view to like
+@bp.route('/<int:id>/like', methods=('POST',))
+@login_required
+def likeMeOrNot(id):
+    if request.method == 'POST':
+        db = get_db()
+        count = db.execute("SELECT count(*) FROM likes WHERE post_id=? and user_id=?",(id, g.user['id'])).fetchone()[0]
+        if(count is 0 ):
+            db.execute(
+                'INSERT INTO likes(post_id, user_id) VALUES(?,?)',(id,g.user['id'])
+                )
+        else: db.execute('DELETE FROM likes where post_id=? and user_id=?',(id,g.user['id']))
+        db.commit()
+    return redirect(url_for('blog.index'))

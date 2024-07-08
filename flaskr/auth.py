@@ -122,3 +122,5 @@ def dashboard():
     # Only accessible if g.user is not None (authenticated user)
     return 'Welcome to the dashboard!'
 '''
+
+
