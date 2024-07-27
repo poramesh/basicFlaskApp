@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-<h1>{% block title %}Posts{% endblock %}</h1>
+<h1>{% block title %}Tags{% endblock %}</h1>
 {% if g.user %}
 <a class="action" href="{{ url_for('blog.create') }}">New</a>
 {% endif %}
@@ -22,29 +22,16 @@
     <a class="action" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
     {% endif %}
   </header>
-  <p class="body">{{ post['body']|safe}}</p>
+  <p class="body">{{ post['body'] }}</p>
 
 
   {% if(post['tags']) %}
   {% for tag in post['tags'].split(',') %}
-    <a href="{{url_for('blog.tags', tag_name = tag)}}" class="tag">{%if(tag) %} #{{ tag }}{% endif %}</a>{% if not loop.last %} {% endif %}
+    <a href="{{url_for('blog.tags', tag_name=tag)}}" class="tag">{%if(tag) %} #{{ tag }}{% endif %}</a>{% if not loop.last %} {% endif %}
   {% endfor %}
 
   {% endif %}
-  
-  {%if(images_by_post[post['id']])%}
-  {% for image in images_by_post[post['id']] %}
-     <div id="image-container">
-     <img src="{{url_for('blog.uploaded_in_instance',filename=image.filename)}}" alt="{{image.filename}}">
-     </div>
-  {%endfor%}
-  {%endif%}
-
 </article>
-<form id="likeForm-{{ post['id']}}" action="{{url_for('blog.likeMeOrNot',id=post['id'],page=page)}}" style="display: none;" method="POST">
-
-  <button type="submit" value="likeOrNot"></button>
-</form>
 
 {% if post['user_liked'] == 1 %}
 <span class="like-comment liked" onclick="submitForm(`{{ post['id'] }}`)">✿<span id="count_likes"> {{post['likes']}}
@@ -54,7 +41,7 @@
   </span></span>
 {% endif %}
 
-<a class = "no-underline" href = "{{ url_for('blog.post',id=post['id'],page=page)}}">
+<a class = "no-underline" href = "{{ url_for('blog.post',id=post['id'])}}">
 <span class="like-comment no-underline"> 🗯️<span id="count_likes"> {{post['comments_count']}}
   </span></span></a>
 

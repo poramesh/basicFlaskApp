@@ -25,3 +25,36 @@ CREATE TABLE IF NOT EXISTS likes(
   FOREIGN KEY (post_id) REFERENCES post (id),
   FOREIGN KEY (user_id) REFERENCES user (id)
 );
+
+CREATE TABLE IF NOT EXISTS comments(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  comment text NOT NULL,
+  post_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (post_id) REFERENCES post (id),
+  FOREIGN KEY (user_id) REFERENCES user (id)
+);
+
+CREATE TABLE IF NOT EXISTS tags(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  tag text NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS post_tag(
+  post_id INTEGER,
+  tag_id INTEGER,
+  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (post_id, tag_id),
+  FOREIGN KEY (post_id) REFERENCES post(id),
+  FOREIGN KEY (tag_id) REFERENCES tag(id)
+);
+
+CREATE TABLE IF NOT EXISTS images (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    post_id INTEGER NOT NULL,
+    filename TEXT NOT NULL,
+    upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status TEXT DEFAULT 'active',
+    FOREIGN KEY (post_id) REFERENCES posts (id)
+);

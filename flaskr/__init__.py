@@ -1,4 +1,3 @@
-
 import os
 
 from flask import Flask, app
@@ -11,6 +10,7 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
+        UPLOAD_FOLDER=os.path.join(app.instance_path,'uploads') 
     )
 
    # If test_config is provided, load the test configuration
@@ -21,12 +21,16 @@ def create_app(test_config=None):
         # load the test config if passed in
         app.config.from_mapping(test_config)
 
-    # ensure the instance folder exists
+    # ensure the instance folder existse
     try:
         os.makedirs(app.instance_path)
     except OSError:
         pass #pass: This line indicates that if an OSError is caught, the program should ignore it and continue running. An OSError might occur if the directory already exists, which is typically not an error that needs to stop the program.
 
+    try:
+        os.makedirs(app.config['UPLOAD_FOLDER'])
+    except OSError:
+        pass
     # a simple page that says hello
     @app.route('/hello')
     def hello():
@@ -43,6 +47,7 @@ def create_app(test_config=None):
     from . import blog
     app.register_blueprint(blog.bp)
     app.add_url_rule('/', endpoint='index')
+
 
     return app
 

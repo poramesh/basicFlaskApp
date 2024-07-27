@@ -28,6 +28,7 @@ def app():
     os.unlink(db_path)
 
 '''the term app refers to the Flask application instance that is created and configured within the fixture function itself.'''
+
 @pytest.fixture
 def client(app):
     return app.test_client()

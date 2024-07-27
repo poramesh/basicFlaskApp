@@ -10,11 +10,29 @@ body {
     background: white;
 }
 
+img{
+    max-width: 550px;
+    margin: 0 auto;
+    background: white;
+    border: 1px rgb(195, 185, 199) solid;
+    border-radius: 0.02%;
+
+}
+.image-container {
+    max-width: 660px;
+    margin: 20px auto;
+    padding: 10px;
+    background: white;
+    border: 1px solid black;
+    border-radius: 15px; /* Adjust this value to make the corners more or less curved */
+}
 h1 {
     font-family: serif;
     color: #377ba8;
     margin: 1rem 0;
 }
+
+
 
 a {
     color: #377ba8;
@@ -55,6 +73,7 @@ header .action {
     display: block;
     padding: 0.5rem;
 }
+
 
 .content {
     padding: 0 1rem 1rem;
@@ -137,7 +156,7 @@ input[type=submit] {
 }
 
 
-.like {
+.like-comment {
     cursor: pointer;
     font-size: 22px;
     height: 30px;
@@ -165,4 +184,38 @@ input[type=submit] {
 
 .no-underline{
     text-decoration: none;
+}
+
+#comment {
+    min-height: 5em;
+    padding: 5px;  /* Add some padding for better readability */
+    font-size: 12px;  /* Adjust the font size */
+    resize: none;  /* Disable resizing */
+    border: 1px solid #ccc;  /* Add a border */
+    border-radius: 5px;  /* Make the corners rounded */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);  /* Add a subtle shadow inside */
+}
+
+
+.tag{
+    text-decoration: none; /* Removes the underline */
+}
+
+
+.pagination {
+    margin: 20px;
+    text-align: center;
+}
+.pagination a {
+    margin: 5px;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+}
+.pagination a.active {
+    background-color: #007bff;
+    color: white;
+}
+.pagination a:hover:not(.active) {
+    background-color: #ddd;
 }

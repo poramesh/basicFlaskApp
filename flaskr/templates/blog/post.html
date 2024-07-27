@@ -1,23 +1,101 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Post "{{ post['title'] }}"{% endblock %}</h1>
+<h1>{% block title %} "{{ post['title'] }}"{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
-    <article class="post">
-      <header>
-        <div>
-          <h1>{{ post['title'] }}</h1>
-          <div class="about">by {{ post['username'] }} on {{ post['created'].strftime('%Y-%m-%d') }}</div>
-        </div>
-        {% if g.user['id'] == post['author_id'] %}
-          <a class="action" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
-        {% endif %}
-      </header>
-      <p class="body">{{ post['body'] }}</p>
-    </article>
-    <a href="{{url_for('blog.index')}}">click here to go back </a>
+<article class="post">
+  <header>
+    <div>
+      <div class="about">by {{ post['username'] }} on {{ post['created'].strftime('%Y-%m-%d') }}</div>
+    </div>
+    {% if g.user['id'] == post['author_id'] %}
+    <a class="action" href="{{ url_for('blog.update', id=post['id'])}}">Edit</a>
+    {% endif %}
+  </header>
+  <p class="body">{{ post['body'] }}</p>
+</article>
 
-      <hr>
+<form id="likeForm-{{ post['id']}}" action="{{url_for('blog.likeMeOrNot',id=post['id'],post_page='true')}}" style="display: none;"
+  method="POST">
+  <button type="submit" value="likeOrNot"></button>
+</form>
+
+{% if post['user_liked'] == 1 %}
+<span class="like-comment liked" onclick="submitForm(`{{ post['id'] }}`)">✿<span id="count_likes"> {{post['likes']}}
+  </span></span>
+{% else %}
+<span class="like-comment like_illa" onclick="submitForm(`{{ post['id'] }}`)">✿<span id="count_likes"> {{post['likes']}}
+  </span></span>
+{% endif %}
+
+<a class="no-underline" href="{{ url_for('blog.post',id=post['id'])}}">
+  <span class="like-comment no-underline"> 🗯️<span id="count_likes"> {{post['comment_count']}}
+    </span></span></a>
+
+
+<script>
+  function submitForm(post_id) {
+    document.getElementById('likeForm-' + post_id).submit();
+  }
+</script>
+
+{%if(images_by_post)%}
+{% for image in images_by_post %}
+   <div id="image-container">
+   <img src="{{url_for('blog.uploaded_in_instance',filename=image.filename)}}" alt="{{image.filename}}">
+   </div>
+{%endfor%}
+{%endif%}
+
+{% if g.user %}
+<form method="POST" action="{{url_for('blog.comment', id=post['id'])}}">
+
+  <textarea name="comment" id="{{post['id']}}" placeholder="post a comment:" required></textarea>
+  <input type="submit" value="post">
+</form>
+
+
+
+
+
+<hr>
+{% for comment in comments %}
+<article class="post">
+  <header>
+    <div class="body">
+      <h3 style="font-weight:normal">{{ comment['comment'] }}</h3>
+    </div>
+    {% if g.user['username'] == comment['username'] %}
+    <form method="POST" class="action"
+      action="{{ url_for('blog.delete_comment', post_id=post['id'], comment_id=comment['id']) }} ">
+      <input type="submit" value="delete" style="width:30px;" onclick="return confirm('Are you sure?');">
+    </form>
+    {% endif %}
+  </header>
+  <div class="about">{{ comment['username'] }} on {{ comment['created'].strftime('%Y-%m-%d') }}</div>
+
+</article>
+
+{% if not loop.last %}
+<hr>
+{% endif %}
+{% endfor %}
+
+
+
+<hr>
+<p><a href="{{url_for('blog.index')}}">click here to go back </a></p>
+
+{% else %}
+<hr>
+<p> <a href="{{ url_for('auth.login') }}">Login</a> TO VIEW COMMENTS </p>
+{% endif %}
+
+
+
+
+
+
 {% endblock %}
